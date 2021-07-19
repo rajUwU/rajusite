@@ -1,6 +1,10 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Home from './Home';
 
 class App extends Component {
 state = {
@@ -9,12 +13,12 @@ state = {
 
   componentDidMount() {
     this.callBackendAPI()
-      .then(res => this.setState({ data: res.hello }))
+      .then(res => this.setState({ data: res.ctx }))
       .catch(err => console.log(err));
   }
     // fetching the GET route from the Express server which matches the GET route from server.js
   callBackendAPI = async () => {
-    const response = await fetch('/api/hello');
+    const response = await fetch('/api/anime');
     const body = await response.json();
 
     if (response.status !== 200) {
@@ -26,11 +30,11 @@ state = {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">{this.state.data}</p>
+        <Header />
+        {/* <p className="App-intro">{this.state.data}</p> */}
+        <p>{this.state.data}</p>
+        <Home />
+        <Footer />
       </div>
     );
   }
