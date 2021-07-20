@@ -43,6 +43,8 @@ app.get('/api/hello', (req, res) => {
     res.send({ctx:'hello world'})
 })
 
+
+
 /**
  * App Configuration
  */
@@ -52,7 +54,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, './public')));
 
 app.use(
     auth({
@@ -108,14 +110,36 @@ app.use((req, res, next) => {
     next();
 })
 
+/**
+ * Profile
+ */
 
+app.get('/api/profile', requiresAuth(), (req,res) => {
+    const user = req.oidc.user;
+    res.json(user);
+})
+
+/**
+ * Other Routes
+ */
 
 app.get('/user-info', requiresAuth(), asyncMiddleware(async (req, res) => {
 
-    const userInfo = await req.oidc.idToken;
+    const userInfo = await req.oidc.fetchUserInfo();
     res.json(userInfo);
 }))
 
+app.get('/api/username', asyncMiddleware(async (req, res) => {
+
+    const userInfo = await req.oidc.fetchUserInfo();
+    res.send({ ctx: `${userInfo['given_name'] + ' ' + userInfo['family_name']}` });
+}))
+
+app.get('/api/isauthenticated', asyncMiddleware(async (req, res) => {
+
+    const userInfo = await req.oidc.isAuthenticated();
+    res.send({ ctx: userInfo });
+}))
 
 
 

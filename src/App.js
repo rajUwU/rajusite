@@ -4,10 +4,12 @@ import React, { Component } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Home from './Home';
+import Home from './templates/Home';
+import Profile from './templates/Profile';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 class App extends Component {
-state = {
+  state = {
     data: null
   };
 
@@ -16,13 +18,13 @@ state = {
       .then(res => this.setState({ data: res.ctx }))
       .catch(err => console.log(err));
   }
-    // fetching the GET route from the Express server which matches the GET route from server.js
+  // fetching the GET route from the Express server which matches the GET route from server.js
   callBackendAPI = async () => {
     const response = await fetch('/api/anime');
     const body = await response.json();
 
     if (response.status !== 200) {
-      throw Error(body.message) 
+      throw Error(body.message)
     }
     return body;
   };
@@ -33,7 +35,12 @@ state = {
         <Header />
         {/* <p className="App-intro">{this.state.data}</p> */}
         <p>{this.state.data}</p>
-        <Home />
+        <Router>
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route path='/profile' component={Profile} />
+          </Switch>
+        </Router>
         <Footer />
       </div>
     );
